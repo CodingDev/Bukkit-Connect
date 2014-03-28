@@ -1,8 +1,8 @@
-name: Bukkit Connect
+name: BukkitConnect
 version: 1.0
 main: de.CodingDev.BukkitConnect.BukkitConnect
 commands:
   bukkitconnect:
-    description: A Bukkit Connect Command
+    description: A BukkitConnect Command
     aliases: [connect, bc]
     usage: /<command>

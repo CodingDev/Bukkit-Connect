@@ -3,6 +3,7 @@ package de.CodingDev.BukkitConnect;
 import java.awt.List;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -18,21 +19,47 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.json.simple.JSONObject;
 
 import de.CodingDev.BukkitConnect.Events.BukkitConnectEvent;
 import de.CodingDev.BukkitConnect.Events.BukkitConnectRequestType;
+import de.CodingDev.BukkitConnect.Metrics.Metrics;
+import de.CodingDev.BukkitConnect.UpdateChecker.Updater;
+import de.CodingDev.BukkitConnect.UpdateChecker.Updater.UpdateResult;
+import de.CodingDev.BukkitConnect.UpdateChecker.Updater.UpdateType;
 
 public class BukkitConnect extends JavaPlugin implements Listener{
 	private ServerHandler serverHandler;
+	private boolean newVersion = false;
+	private String prefix = "&6[Bukkit Connect] ";
+	private String newVersionName = "";
+	
 	public void onEnable(){
 		configManager();
 		serverHandler = new ServerHandler(this);
 		serverHandler.setRunning(true);
 		serverHandler.start();
 		getServer().getPluginManager().registerEvents(this, this);
+		
+		//Updater
+		Updater updater = new Updater(this, 76974, this.getFile(), UpdateType.NO_DOWNLOAD, true);
+		if (updater.getResult() == UpdateResult.UPDATE_AVAILABLE) {
+		    getLogger().info("New version available! " + updater.getLatestName());
+		    newVersion = true;
+		    newVersionName = updater.getLatestName();
+		}else if (updater.getResult() == UpdateResult.NO_UPDATE) {
+		    getLogger().info("No new version available");
+		}else{
+		    getLogger().info("Updater: " + updater.getResult());
+		}
+		//Metrics
+		try{
+			Metrics metrics = new Metrics(this);
+			metrics.start();
+		}catch (IOException localIOException) {}
 		getLogger().info("Bukkit Connect has been enabled.");
 	}
  
@@ -47,6 +74,13 @@ public class BukkitConnect extends JavaPlugin implements Listener{
 		serverHandler.setRunning(false);
 		serverHandler.stopServer();
 		getLogger().info("Bukkit Connect has been disabled.");
+	}
+	
+	@EventHandler
+	public void onJoin(PlayerJoinEvent e){
+		if(newVersion){
+			e.getPlayer().sendMessage(prefix + "A new Version is available! (&c" + newVersionName + "&6)");
+		}
 	}
 	
 	@EventHandler(priority = EventPriority.LOW)
