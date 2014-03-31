@@ -88,18 +88,18 @@ public class BukkitConnect extends JavaPlugin implements Listener{
 		if(e.getRequestType() == BukkitConnectRequestType.GET){
 			if(e.getGETParameters().containsKey("method")){
 				if(e.getGETParameters().get("method").equalsIgnoreCase("getServerInfos")){
-					e.getWebsiteReturnJsonObject().put("serverVersion", getServer().getBukkitVersion());
-					e.getWebsiteReturnJsonObject().put("minecraftVersion", getServer().getVersion());
-					e.getWebsiteReturnJsonObject().put("players", getServer().getMaxPlayers());
-					e.getWebsiteReturnJsonObject().put("maxPlayers", getServer().getOnlinePlayers().length);
-					e.getWebsiteReturnJsonObject().put("motd", getServer().getMotd());
-				}else if(e.getGETParameters().get("method").equalsIgnoreCase("getPlayers")){
+					e.getWebsiteReturnJsonObject().put("getBukkitVersion", getServer().getBukkitVersion());
+					e.getWebsiteReturnJsonObject().put("getVersion", getServer().getVersion());
+					e.getWebsiteReturnJsonObject().put("getMaxPlayers", getServer().getMaxPlayers());
+					e.getWebsiteReturnJsonObject().put("getOnlinePlayers", getServer().getOnlinePlayers().length);
+					e.getWebsiteReturnJsonObject().put("getMotd", getServer().getMotd());
+				}else if(e.getGETParameters().get("method").equalsIgnoreCase("getOnlinePlayers")){
 					ArrayList playerList = new ArrayList();
-					e.getWebsiteReturnJsonObject().put("maxPlayers", getServer().getOnlinePlayers().length);
+					e.getWebsiteReturnJsonObject().put("getMaxPlayers", getServer().getOnlinePlayers().length);
 					for(Player p : getServer().getOnlinePlayers()){
 						playerList.add(p.getName());
 					}
-					e.getWebsiteReturnJsonObject().put("players", playerList);
+					e.getWebsiteReturnJsonObject().put("getOnlinePlayers", playerList);
 				}else if(e.getGETParameters().get("method").equalsIgnoreCase("getPlayerExact")){
 					if(e.getGETParameters().containsKey("username")){
 						Player p = getServer().getPlayerExact(e.getGETParameters().get("username"));
