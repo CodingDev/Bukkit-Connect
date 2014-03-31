@@ -55,7 +55,7 @@ public class ServerHandler extends Thread{
 			    			POSTparameters = decodeRecivedData(splitFistLine[1], requestType);
 			    		}
 					    //Fire Event and send Return
-					    BukkitConnectEvent connectEvent = new BukkitConnectEvent(GETparameters, POSTparameters, requestType);
+					    BukkitConnectEvent connectEvent = new BukkitConnectEvent(GETparameters, POSTparameters, requestType, connectionSocket);
 					    bukkitConnect.getServer().getPluginManager().callEvent(connectEvent);
 					    outToClient.writeBytes(connectEvent.getWebsiteReturnJsonObject().toJSONString()+'\n');
 			    	}else{

@@ -1,5 +1,7 @@
 package de.CodingDev.BukkitConnect.Events;
 
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.Map;
 
 import org.bukkit.event.Event;
@@ -11,11 +13,13 @@ public final class BukkitConnectEvent extends Event {
     private Map<String, String> GETparameters, POSTparameters;
     private JSONObject jsonObject = new JSONObject();
     private BukkitConnectRequestType requestType;
+    private Socket connectionSocket;
  
-    public BukkitConnectEvent(Map<String, String> GETparameters, Map<String, String> POSTparameters, BukkitConnectRequestType requestType) {
+    public BukkitConnectEvent(Map<String, String> GETparameters, Map<String, String> POSTparameters, BukkitConnectRequestType requestType, Socket connectionSocket) {
     	this.GETparameters = GETparameters;
     	this.POSTparameters = POSTparameters;
     	this.requestType = requestType;
+    	this.connectionSocket = connectionSocket;
     }
  
     public Map<String, String> getGETParameters() {
@@ -32,6 +36,18 @@ public final class BukkitConnectEvent extends Event {
     
     public JSONObject getWebsiteReturnJsonObject(){
     	return jsonObject;
+    }
+    
+    public InetAddress getClientInetAddress(){
+    	return connectionSocket.getInetAddress();
+    }
+    
+    public InetAddress getClientLocalAddress(){
+    	return connectionSocket.getLocalAddress();
+    }
+    
+    public int getClientPort(){
+    	return connectionSocket.getPort();
     }
  
     public HandlerList getHandlers() {
