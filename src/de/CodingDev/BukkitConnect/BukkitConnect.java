@@ -1,18 +1,8 @@
 package de.CodingDev.BukkitConnect;
 
-import java.awt.List;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -22,7 +12,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.json.simple.JSONObject;
 
 import de.CodingDev.BukkitConnect.Events.BukkitConnectEvent;
 import de.CodingDev.BukkitConnect.Events.BukkitConnectRequestType;
@@ -30,18 +19,21 @@ import de.CodingDev.BukkitConnect.Metrics.Metrics;
 import de.CodingDev.BukkitConnect.UpdateChecker.Updater;
 import de.CodingDev.BukkitConnect.UpdateChecker.Updater.UpdateResult;
 import de.CodingDev.BukkitConnect.UpdateChecker.Updater.UpdateType;
+import de.CodingDev.BukkitConnect.WebSocket.WebSocketManager;
 
 public class BukkitConnect extends JavaPlugin implements Listener{
 	private ServerHandler serverHandler;
 	private boolean newVersion = false;
 	private String prefix = "&6[Bukkit Connect] ";
 	private String newVersionName = "";
+	private WebSocketManager wsm;
 	
 	public void onEnable(){
 		configManager();
 		serverHandler = new ServerHandler(this);
 		serverHandler.setRunning(true);
 		serverHandler.start();
+		wsm = new WebSocketManager(this);
 		getServer().getPluginManager().registerEvents(this, this);
 		
 		//Updater
@@ -61,6 +53,10 @@ public class BukkitConnect extends JavaPlugin implements Listener{
 			metrics.start();
 		}catch (IOException localIOException) {}
 		getLogger().info("Bukkit Connect has been enabled.");
+	}
+	
+	public WebSocketManager getWebSocketManager(){
+		return wsm;
 	}
  
 	private void configManager() {
